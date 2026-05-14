@@ -1,0 +1,208 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Settings {
+  id         String   @id @default("default")
+  tipPresets String   @default("[15, 18, 20]") // JSON array of percentages
+  updatedAt  DateTime @updatedAt
+}
+
+model Product {
+  id           String          @id @default(cuid())
+  name         String
+  description  String?
+  price        Float
+  category     String          @default("General")
+  image        String?
+  inStock      Boolean         @default(true)
+  stockCount   Int             @default(0)
+  reorderPoint Int             @default(10)
+  sku          String?
+  barcode      String?
+  unitType     String          @default("pcs")
+  costPrice    Float           @default(0)
+  memberPrice  Float?
+  hasVariants  Boolean         @default(false)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  variants       ProductVariant[]
+  orderItems     OrderItem[]
+  inventoryLogs  InventoryLog[]
+}
+
+model ProductVariant {
+  id         String  @id @default(cuid())
+  productId  String
+  name       String // e.g. "Large / Blue"
+  sku        String?
+  size       String?
+  color      String?
+  price      Float?  // Override base price if set
+  costPrice  Float?
+  stockCount Int     @default(0)
+  inStock    Boolean @default(true)
+
+  product       Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderItems    OrderItem[]
+  inventoryLogs InventoryLog[]
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?
+  phone     String?
+  isMember  Boolean  @default(false)
+  cardToken String?  // For open tabs
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders Order[]
+}
+
+model Order {
+  id           String      @id @default(cuid())
+  orderNumber  Int         @unique
+  status       String      @default("open") // open, hold, closed, void, cancelled
+  tabType      String      @default("walk-in") // walk-in, open-tab, reserved, staff
+  customerName String?
+  customerId   String?
+  location     String?
+  subtotal     Float       @default(0)
+  discount     Float       @default(0)
+  discountType String?     // "percentage" or "fixed"
+  tip          Float       @default(0)
+  total        Float       @default(0)
+  balance      Float       @default(0)
+  paid         Float       @default(0)
+  notes        String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  orderItems OrderItem[]
+  customer   Customer?    @relation(fields: [customerId], references: [id])
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  productId String
+  variantId String?
+  quantity  Int     @default(1)
+  price     Float
+  subtotal  Float
+
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+  variant ProductVariant? @relation(fields: [variantId], references: [id])
+}
+
+model Apparel {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  size        String
+  color       String
+  stockCount  Int      @default(0)
+  sku         String?
+  image       String?
+  category    String   @default("Shirts")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model InventoryLog {
+  id        String   @id @default(cuid())
+  productId String
+  variantId String?
+  type      String   // sale, restock, adjustment, initial, void, return, receiving
+  quantity  Int
+  note      String?
+  staffName String?
+  poNumber  String?
+  unitCost  Float?
+  totalCost Float?
+  createdAt DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id])
+  variant ProductVariant? @relation(fields: [variantId], references: [id])
+}
+
+model Device {
+  id           String   @id @default(cuid())
+  name         String
+  deviceKey    String   @unique
+  location     String   @default("Main")
+  isActive     Boolean  @default(true)
+  registeredBy String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  sessions RegisterSession[]
+}
+
+model Staff {
+  id        String   @id @default(cuid())
+  name      String
+  pin       String   // hashed or plain for demo
+  role      String   @default("cashier") // cashier, manager, executive
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model RegisterSession {
+  id               String    @id @default(cuid())
+  deviceId         String
+  staffName        String
+  status           String    @default("open") // open, closed
+  openingExpected  Float     @default(0)
+  openingActual    Float     @default(0)
+  openingVariance  Float     @default(0)
+  openingFlagged   Boolean   @default(false)
+  closingExpected  Float?
+  closingActual    Float?
+  closingVariance  Float?
+  carryForward     Float?
+  openedAt         DateTime  @default(now())
+  closedAt         DateTime?
+  notes            String?
+
+  device    Device          @relation(fields: [deviceId], references: [id])
+  movements CashMovement[]
+  override  ManagerOverride?
+}
+
+model CashMovement {
+  id         String   @id @default(cuid())
+  sessionId  String
+  type       String   // deposit, payout, tip-payout, adjustment
+  amount     Float
+  reason     String
+  notes      String?
+  approvedBy String
+  createdAt  DateTime @default(now())
+
+  session RegisterSession @relation(fields: [sessionId], references: [id])
+}
+
+model ManagerOverride {
+  id             String   @id @default(cuid())
+  sessionId      String   @unique
+  varianceAmount Float
+  reasonCode     String
+  notes          String?
+  approvedBy     String
+  approvedAt     DateTime @default(now())
+
+  session RegisterSession @relation(fields: [sessionId], references: [id])
+}
+

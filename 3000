@@ -1,0 +1,24 @@
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /Users/priyabratas/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /Users/priyabratas/.gemini/antigravity/scratch/pro-shop-v1/bun.lock
+
+▲ Next.js 16.1.3 (Turbopack)
+- Local:         http://localhost:3001
+- Network:       http://172.16.8.83:3001
+- Environments: .env
+
+✓ Starting...
+✓ Ready in 1039ms
+ GET /api/app/cmo9yrz7u0000x1thdni65z5c/html 404 in 266ms (compile: 113ms, render: 153ms)
+ GET / 200 in 263ms (compile: 185ms, render: 78ms)
+ GET /api/seed 405 in 177ms (compile: 47ms, render: 130ms)
+prisma:query SELECT `main`.`Order`.`id`, `main`.`Order`.`orderNumber`, `main`.`Order`.`status`, `main`.`Order`.`tabType`, `main`.`Order`.`customerName`, `main`.`Order`.`customerId`, `main`.`Order`.`location`, `main`.`Order`.`total`, `main`.`Order`.`balance`, `main`.`Order`.`paid`, `main`.`Order`.`notes`, `main`.`Order`.`createdAt`, `main`.`Order`.`updatedAt` FROM `main`.`Order` WHERE 1=1 ORDER BY `main`.`Order`.`createdAt` DESC LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`OrderItem`.`id`, `main`.`OrderItem`.`orderId`, `main`.`OrderItem`.`productId`, `main`.`OrderItem`.`quantity`, `main`.`OrderItem`.`price`, `main`.`OrderItem`.`subtotal` FROM `main`.`OrderItem` WHERE `main`.`OrderItem`.`orderId` IN (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`Product`.`id`, `main`.`Product`.`name`, `main`.`Product`.`description`, `main`.`Product`.`price`, `main`.`Product`.`category`, `main`.`Product`.`image`, `main`.`Product`.`inStock`, `main`.`Product`.`stockCount`, `main`.`Product`.`reorderPoint`, `main`.`Product`.`sku`, `main`.`Product`.`barcode`, `main`.`Product`.`unitType`, `main`.`Product`.`costPrice`, `main`.`Product`.`memberPrice`, `main`.`Product`.`createdAt`, `main`.`Product`.`updatedAt` FROM `main`.`Product` WHERE `main`.`Product`.`id` IN (?,?,?,?,?,?,?) LIMIT ? OFFSET ?
+prisma:query SELECT `main`.`Customer`.`id`, `main`.`Customer`.`name`, `main`.`Customer`.`email`, `main`.`Customer`.`phone`, `main`.`Customer`.`isMember`, `main`.`Customer`.`createdAt`, `main`.`Customer`.`updatedAt` FROM `main`.`Customer` WHERE `main`.`Customer`.`id` IN (?,?,?,?,?,?,?,?,?,?,?,?,?) LIMIT ? OFFSET ?
+ GET /api/orders?sortBy=newest 200 in 224ms (compile: 186ms, render: 38ms)
+ GET /api/app/cmo9yrz7u0000x1thdni65z5c/html 404 in 16ms (compile: 3ms, render: 13ms)
+[?25h
