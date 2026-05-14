@@ -148,3 +148,48 @@ prisma:query SELECT `main`.`OrderItem`.`id`, `main`.`OrderItem`.`orderId`, `main
 prisma:query SELECT `main`.`Product`.`id`, `main`.`Product`.`name`, `main`.`Product`.`description`, `main`.`Product`.`price`, `main`.`Product`.`category`, `main`.`Product`.`image`, `main`.`Product`.`inStock`, `main`.`Product`.`stockCount`, `main`.`Product`.`reorderPoint`, `main`.`Product`.`sku`, `main`.`Product`.`barcode`, `main`.`Product`.`unitType`, `main`.`Product`.`costPrice`, `main`.`Product`.`memberPrice`, `main`.`Product`.`hasVariants`, `main`.`Product`.`createdAt`, `main`.`Product`.`updatedAt` FROM `main`.`Product` WHERE `main`.`Product`.`id` IN (?,?,?,?,?,?,?) LIMIT ? OFFSET ?
 prisma:query SELECT `main`.`Customer`.`id`, `main`.`Customer`.`name`, `main`.`Customer`.`email`, `main`.`Customer`.`phone`, `main`.`Customer`.`isMember`, `main`.`Customer`.`cardToken`, `main`.`Customer`.`createdAt`, `main`.`Customer`.`updatedAt` FROM `main`.`Customer` WHERE `main`.`Customer`.`id` IN (?,?,?,?) LIMIT ? OFFSET ?
  GET /api/orders?status=closed&sortBy=newest&date=2026-05-14 200 in 7ms (compile: 1674µs, render: 6ms)
+
+<--- Last few GCs --->
+
+[8042:0x963400000]  1768527 ms: Mark-Compact 7992.5 (8224.6) -> 7965.2 (8216.9) MB, 13733.46 / 17.96 ms  (average mu = 0.062, current mu = 0.017) allocation failure; scavenge might not succeed
+[8042:0x963400000]  1768629 ms: Scavenge 7986.6 (8221.6) -> 7976.4 (8221.6) MB, 13.88 / 0.00 ms  (average mu = 0.062, current mu = 0.017) allocation failure; 
+[8042:0x963400000]  1768708 ms: Scavenge 7987.5 (8222.6) -> 7980.5 (8225.1) MB, 42.42 / 0.00 ms  (average mu = 0.062, current mu = 0.017) allocation failure; 
+
+
+<--- JS stacktrace --->
+
+FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+ 1: 0x1004a01b4 node::OOMErrorHandler(char const*, v8::OOMDetails const&) [/Users/priyabratas/.nvm/versions/node/v20.20.2/bin/node]
+ 2: 0x10064eee0 v8::internal::V8::FatalProcessOutOfMemory(v8::internal::Isolate*, char const*, v8::OOMDetails const&) [/Users/priyabratas/.nvm/versions/node/v20.20.2/bin/node]
+ 3: 0x10085c904 v8::internal::Heap::GarbageCollectionReasonToString(v8::internal::GarbageCollectionReason) [/Users/priyabratas/.nvm/versions/node/v20.20.2/bin/node]
+ 4: 0x100860400 v8::internal::Heap::CollectGarbageShared(v8::internal::LocalHeap*, v8::internal::GarbageCollectionReason) [/Users/priyabratas/.nvm/versions/node/v20.20.2/bin/node]
+ 5: 0x10085d27c v8::internal::Heap::PerformGarbageCollection(v8::internal::GarbageCollector, v8::internal::GarbageCollectionReason, char const*) [/Users/priyabratas/.nvm/versions/node/v20.20.2/bin/node]
+ 6: 0x10085adf8 v8::internal::Heap::CollectGarbage(v8::internal::AllocationSpace, v8::internal::GarbageCollectionReason, v8::GCCallbackFlags) [/Users/priyabratas/.nvm/versions/node/v20.20.2/bin/node]
+ 7: 0x100851108 v8::internal::HeapAllocator::AllocateRawWithLightRetrySlowPath(int, v8::internal::AllocationType, v8::internal::AllocationOrigin, v8::internal::AllocationAlignment) [/Users/priyabratas/.nvm/versions/node/v20.20.2/bin/node]
+ 8: 0x100851960 v8::internal::HeapAllocator::AllocateRawWithRetryOrFailSlowPath(int, v8::internal::AllocationType, v8::internal::AllocationOrigin, v8::internal::AllocationAlignment) [/Users/priyabratas/.nvm/versions/node/v20.20.2/bin/node]
+ 9: 0x1008356bc v8::internal::Factory::AllocateRaw(int, v8::internal::AllocationType, v8::internal::AllocationAlignment) [/Users/priyabratas/.nvm/versions/node/v20.20.2/bin/node]
+10: 0x100828a68 v8::internal::FactoryBase<v8::internal::Factory>::NewFixedArrayWithFiller(v8::internal::Handle<v8::internal::Map>, int, v8::internal::Handle<v8::internal::Oddball>, v8::internal::AllocationType) [/Users/priyabratas/.nvm/versions/node/v20.20.2/bin/node]
+11: 0x100b39974 v8::internal::OrderedHashTable<v8::internal::OrderedHashSet, 1>::Allocate(v8::internal::Isolate*, int, v8::internal::AllocationType) [/Users/priyabratas/.nvm/versions/node/v20.20.2/bin/node]
+12: 0x100aec770 v8::internal::KeyAccumulator::AddKey(v8::internal::Handle<v8::internal::Object>, v8::internal::AddKeyConversion) [/Users/priyabratas/.nvm/versions/node/v20.20.2/bin/node]
+13: 0x100af04e0 v8::internal::KeyAccumulator::CollectOwnPropertyNames(v8::internal::Handle<v8::internal::JSReceiver>, v8::internal::Handle<v8::internal::JSObject>) [/Users/priyabratas/.nvm/versions/node/v20.20.2/bin/node]
+14: 0x100aedb78 v8::internal::KeyAccumulator::CollectOwnKeys(v8::internal::Handle<v8::internal::JSReceiver>, v8::internal::Handle<v8::internal::JSObject>) [/Users/priyabratas/.nvm/versions/node/v20.20.2/bin/node]
+15: 0x100aed0e4 v8::internal::KeyAccumulator::CollectKeys(v8::internal::Handle<v8::internal::JSReceiver>, v8::internal::Handle<v8::internal::JSReceiver>) [/Users/priyabratas/.nvm/versions/node/v20.20.2/bin/node]
+16: 0x1006669b8 v8::Object::GetPropertyNames(v8::Local<v8::Context>, v8::KeyCollectionMode, v8::PropertyFilter, v8::IndexFilter, v8::KeyConversionMode) [/Users/priyabratas/.nvm/versions/node/v20.20.2/bin/node]
+17: 0x100448970 napi_get_all_property_names [/Users/priyabratas/.nvm/versions/node/v20.20.2/bin/node]
+18: 0x12bac51e8 blake3_compress_in_place_portable [/Users/priyabratas/.gemini/antigravity/scratch/pro-shop-v1/node_modules/@next/swc-darwin-arm64/next-swc.darwin-arm64.node]
+19: 0x127e58198  [/Users/priyabratas/.gemini/antigravity/scratch/pro-shop-v1/node_modules/@next/swc-darwin-arm64/next-swc.darwin-arm64.node]
+20: 0x127dc8c0c  [/Users/priyabratas/.gemini/antigravity/scratch/pro-shop-v1/node_modules/@next/swc-darwin-arm64/next-swc.darwin-arm64.node]
+21: 0x127e67c00  [/Users/priyabratas/.gemini/antigravity/scratch/pro-shop-v1/node_modules/@next/swc-darwin-arm64/next-swc.darwin-arm64.node]
+22: 0x127ef44a0  [/Users/priyabratas/.gemini/antigravity/scratch/pro-shop-v1/node_modules/@next/swc-darwin-arm64/next-swc.darwin-arm64.node]
+23: 0x127dc32c4  [/Users/priyabratas/.gemini/antigravity/scratch/pro-shop-v1/node_modules/@next/swc-darwin-arm64/next-swc.darwin-arm64.node]
+24: 0x127dfcbbc  [/Users/priyabratas/.gemini/antigravity/scratch/pro-shop-v1/node_modules/@next/swc-darwin-arm64/next-swc.darwin-arm64.node]
+25: 0x100467f98 v8impl::(anonymous namespace)::ThreadSafeFunction::AsyncCb(uv_async_s*) [/Users/priyabratas/.nvm/versions/node/v20.20.2/bin/node]
+26: 0x100f2d2c8 uv__async_io [/Users/priyabratas/.nvm/versions/node/v20.20.2/bin/node]
+27: 0x100f3ff70 uv__io_poll [/Users/priyabratas/.nvm/versions/node/v20.20.2/bin/node]
+28: 0x100f2d830 uv_run [/Users/priyabratas/.nvm/versions/node/v20.20.2/bin/node]
+29: 0x1003b57e8 node::SpinEventLoopInternal(node::Environment*) [/Users/priyabratas/.nvm/versions/node/v20.20.2/bin/node]
+30: 0x1004e4b90 node::NodeMainInstance::Run() [/Users/priyabratas/.nvm/versions/node/v20.20.2/bin/node]
+31: 0x1004610f8 node::Start(int, char**) [/Users/priyabratas/.nvm/versions/node/v20.20.2/bin/node]
+32: 0x1809afda4 start [/usr/lib/dyld]
